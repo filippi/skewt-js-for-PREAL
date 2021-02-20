@@ -539,6 +539,4 @@ window.SkewT = function(div) {
     setVariables();
     resize();
 };
-
-//export default SkewT;
-//huhuujiiji
+             

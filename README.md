@@ -1,31 +1,37 @@
 # skewt-js
 Plot a skew-T log-P diagram based on sounding data.
 
-## Example
-See live at [Clube Icaro meteo](http://meteo.clubeicaro.pt/skewt.html)
+This was forked from:  [https://github.com/dfelix/skewt-js](https://github.com/dfelix/skewt-js).
+
+## Changes
+
+- Updated to work with D3 version 5.
+- Interactivity:  Set top pressure (zoom),  set gradient,  toggle maintain temperature range.
+
+I have added the following functionality thanks to [Victor Berchet](https://github.com/vicb/windy-plugin-sounding) :
+
+- Added moist adiabats.
+- Added isohumes.
+- Added parcel trajectory.
 
 ## Dependencies
 skewt-js requires [D3 JavaScript library](https://github.com/d3/d3).
 
 ```html
-<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3.v5.js"></script>
 ```
 
 ## How to use
-Ensure a reference to both skewt.js and skewt.css files.
 
 ```html
-<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="dist/bundle.js"></script>
 ```
 
-
-## How it works
-
-Ensure you create a div using a specified id (ex: id="skewt") or a specific css class.
-It will act as the diagram placeholder.
+Ensure you create a div using a specified id (ex: id="mySkewt") and class = "skew-t"
 
 ```html
-<div id="mySkewt"></div>
+<div id="mySkewt" class="skew-t"></div>
 ```
 
 Declare a new SkewT var passing the css selector for the placeholder.
@@ -36,7 +42,7 @@ Declare a new SkewT var passing the css selector for the placeholder.
 </script>
 ```
 
-SkewT only contains two methods:
+SkewT currently only contains methods:
 
 #### Plot
 
@@ -65,7 +71,7 @@ Expected array format should follow the GSD Sounding Format.
 		"dwpt": 5.6,
 		"wdir": 10.0,
 		"wspd": 7.716
-	}, 
+	},
 	...
 ]
 ```
@@ -73,3 +79,7 @@ Expected array format should follow the GSD Sounding Format.
 #### Clear
 
 .clear() will clear the previous plot lines and wind barbs.
+
+#### more methods
+
+I am adding more methods to plot more than one dataset

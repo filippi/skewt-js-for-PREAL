@@ -1,6 +1,6 @@
 {
   "name": "skewt-plus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "skewt-plus",
   "main": "dist/bundle.js",
   "scripts": {
