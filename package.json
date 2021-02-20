@@ -1,0 +1,25 @@
+{
+  "name": "skewt-plus",
+  "version": "1.0.0",
+  "description": "skewt-plus",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "start": "node build.js",
+    "rollup": "rollup src/skewt.js --format iife --name \"myBundle\" --file dist/bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rittels/skewt-js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rittels/skewt-js/issues"
+  },
+  "homepage": "https://github.com/rittels/skewt-js#readme",
+
+  "devDependencies": {
+    "less": "^4.1.1",
+    "rollup": "^2.39.0"
+  }
+}
