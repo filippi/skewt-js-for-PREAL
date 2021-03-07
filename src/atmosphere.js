@@ -66,6 +66,7 @@ export function getElevation(p) {
 }
 
 export function parcelTrajectory(params, steps, sfcT, sfcP, sfcDewpoint) {
+
   const parcel = {};
   const dryGhs = [];
   const dryPressures = [];
@@ -97,6 +98,7 @@ export function parcelTrajectory(params, steps, sfcT, sfcP, sfcDewpoint) {
   }
 
   if (cloudBase[0] < thermalTop[0]) {
+
     thermalTop = cloudBase;
 
     const pCloudBase = pToEl.invert(cloudBase[0]);
@@ -121,15 +123,19 @@ export function parcelTrajectory(params, steps, sfcT, sfcP, sfcDewpoint) {
     const equilibrium = math.firstIntersection(moistGhs, moistTemps, params.gh, params.temp);
 
     parcel.pCloudTop = params.level[params.level.length - 1];
+
     if (equilibrium) {
       const pCloudTop = pToEl.invert(equilibrium[0]);
       moist = moist.filter((pt) => pt[1] >= pCloudTop);
       moist.push([equilibrium[1], pCloudTop]);
       parcel.pCloudTop = pCloudTop;
     }
+
     parcel.moist = moist;
     parcel.isohume = isohume;
+
   }
+
 
   const pThermalTop = pToEl.invert(thermalTop[0]);
   const dry = math.zip(dryTemps, dryPressures).filter((pt) => pt[1] > pThermalTop);

@@ -9,7 +9,6 @@ export function linearInterpolate(x1, y1, x2, y2, x) {
     if (Array.isArray(y1)) {
         return y1.map((y1, i) => y1 * (1 - w) + y2[i] * w);
     }
-
     return y1 * (1 - w) + y2 * w;
 }
 

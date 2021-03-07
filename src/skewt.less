@@ -13,7 +13,7 @@
         text-align:center;
         font:10px Arial;
         cursor:pointer;
-        background-color:rgba(200,200,200,1);
+        background-color:rgba(220,220,220,1);
     }
     .controls .buttons.clicked{
         background-color:rgba(150,150,150,1);
@@ -35,30 +35,39 @@
     .x.axis { font-size: 6px; }
     .y.axis.ticks text { display: none; }
 
-    .temp {
-      fill: none;
-      stroke: red;
-      stroke-width: 3px;
-    }
-    .dwpt {
-      fill: none;
-      stroke: blue;
-      stroke-width: 3px;
-    }
-    .parcel {
-      fill: none;
-      stroke: green;
-      stroke-width: 3px;
+
+    .skewt-line{
+        fill:none;
+        stroke-width: 1.5px;
+        stroke-opacity: 0.5;
+        &.highlight-line{
+            stroke-opacity:1;
+            stroke-width:2px;
+        }
     }
 
-    .skline   { stroke-width: 1.8px; opacity: 0.8;}
-    .mean     { stroke-width: 2.5px; }
+    .temp{
+        .skewt-line;
+        stroke:red;
 
-    .gridline {
+    }
+    .dwpt{
+        .skewt-line;
+        stroke:blue;
+    }
+    .parcel{
+        .skewt-line;
+        stroke:green;
+    }
+
+    //.skline   { stroke-width: 1.8px; }
+    //.mean     { stroke-width: 2.5px; }
+
+    .gridline{
        stroke-width: 0.5px;
        stroke-opacity:0.3;
        fill: none;
-       .highlight-line{
+       &.highlight-line{
             stroke-opacity:1;
             stroke-width:1px;
         }
@@ -93,12 +102,26 @@
         stroke-dasharray:2;
     }
 
-    .windbarb { stroke: #000; stroke-width: 0.75px; fill: none;}
+    .windbarb {
+        stroke: #000;
+        stroke-width: 0.75px;
+        fill: none;
+        stroke-opacity:1;
+
+        .barblines{
+            opacity:0.4;
+            &.highlight-line{
+                opacity:1;
+            }
+        }
+
+    }
     .flag { fill: #000; }
 
     .overlay {
-      fill: none;
+      fill:none;
       pointer-events: all;
+
     }
 
     .focus.tmpc circle { fill: red;   stroke: none; }
@@ -120,12 +143,34 @@
     }
 
     .skewt-ranges{
+        all:revert;
+        -webkit-appearance: none;
+        color:white;
         width:60%;
-    }
-    .skewt-ranges::-webkit-slider-runnable-track {
-        //all:revert !important;
-        background:rgba(240,240,240);
-        border-radius: 10px;
+        &:focus{
+            outline:none;
+        }
+        &::-webkit-slider-runnable-track {
+            all:revert;
+            -webkit-appearance: none;
+            background:rgba(220,220,220);
+            border-radius: 16px;
+            height:16px;
+            padding:2px;
+
+        }
+        &::-webkit-slider-thumb {
+            all:revert;
+          -webkit-appearance: none;
+          border: 1px solid rgba(100,100,100);
+          height: 12px;
+          width: 12px;
+          border-radius: 12px;
+          background: #ffffff;
+          cursor: pointer;
+          //margin: 2px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+          box-shadow: 1px 1px 1px #000000;
+        }
     }
 
     .skewt-range-val{
