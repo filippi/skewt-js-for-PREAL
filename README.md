@@ -17,13 +17,12 @@ I have added the following functionality thanks to [Victor Berchet](https://gith
 ## Dependencies
 skewt-js requires [D3 JavaScript library](https://github.com/d3/d3).
 
-```html
-<script src="https://d3js.org/d3.v5.js"></script>
-```
 
 ## How to use
 
 ```html
+<link rel="stylesheet" href="dist/skewt.css">
+
 <script src="https://d3js.org/d3.v5.js"></script>
 <script src="dist/bundle.js"></script>
 ```
@@ -38,7 +37,7 @@ Declare a new SkewT var passing the css selector for the placeholder.
 
 ```html
 <script>
-	var skewt = new SkewT('#mySkewt');
+	var skewt = new SkewT('#mySkewt' , options);
 </script>
 ```
 
@@ -48,7 +47,7 @@ SkewT currently only contains methods:
 
 .plot(array, options) will plot dew point and air temperature lines and wind barbs. options is optional.
 
-Available options {add:true} to add a plotline,  else the current ones will be cleared.  If add:true, and select:true,  then the added plot line will be highlighted.
+Available options: {add:true} to add a plotline,  else the current ones will be cleared.  If {add:true,  select:true},  then the added plot line will be highlighted.
 
 ```javascript
   var skewt = new SkewT('#mySkewt');
@@ -82,6 +81,6 @@ Expected array format should follow the GSD Sounding Format.
 
 .clear() will clear the previous plot lines and wind barbs.
 
-#### more methods
+#### Select a skewt plot
 
 .selectSkewt(  array_previously_sent_with_plot )  to highlight a plot lines.  The tooltips will then display info from this line.
