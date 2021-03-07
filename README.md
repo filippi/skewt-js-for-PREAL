@@ -46,7 +46,9 @@ SkewT currently only contains methods:
 
 #### Plot
 
-.plot(array) will plot dew point and air temperature lines and wind barbs.
+.plot(array, options) will plot dew point and air temperature lines and wind barbs. options is optional.
+
+Available options {add:true} to add a plotline,  else the current ones will be cleared.  If add:true, and select:true,  then the added plot line will be highlighted.
 
 ```javascript
   var skewt = new SkewT('#mySkewt');
@@ -82,4 +84,4 @@ Expected array format should follow the GSD Sounding Format.
 
 #### more methods
 
-I am adding more methods to plot more than one dataset
+.selectSkewt(  array_previously_sent_with_plot )  to highlight a plot lines.  The tooltips will then display info from this line.

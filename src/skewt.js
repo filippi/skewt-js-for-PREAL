@@ -20,7 +20,7 @@ window.SkewT = function(div) {
     var wrapper = d3.select(div);
     var width = parseInt(wrapper.style('width'), 10);
     var height = width + 20; //tofix
-    var margin = {top: 10, right: 20, bottom: 10, left: 20}; //container margins
+    var margin = {top: 10, right: 25, bottom: 10, left: 25}; //container margins
     var deg2rad = (Math.PI/180);
     var gradient = 55;
     var adjustGradient=false;
@@ -615,11 +615,16 @@ window.SkewT = function(div) {
         dataAr.splice(dataAr.indexOf(dataObj),1);
     }
 
-    var clear = function(s){
+    var clear = function(s){   //remove everything
+
+        dataAr.forEach(d=>{
+            for (let p in d.lines) d.lines[p].remove;
+        });
         skewtgroup.selectAll("path").remove(); //clear previous paths from skew
         skewtgroup.selectAll("g").remove();
         barbgroup.selectAll("use").remove(); //clear previous paths  from barbs
-        //if(tooltipRect)tooltipRect.remove();
+        dataAr=[];
+        //if(tooltipRect)tooltipRect.remove();    tooltip rect is permanent
     }
 
     var clearBg = function(){
