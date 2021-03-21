@@ -229,7 +229,7 @@ function parcelTrajectory(params, steps, sfcT, sfcP, sfcDewpoint) {
  *
  */
 
-window.SkewT = function(div) {
+window.SkewT = function(div, isTouchDevice) {
 
     var _this=this;
     //properties used in calculations
@@ -241,7 +241,7 @@ window.SkewT = function(div) {
     var adjustGradient=false;
     var tan;
     var basep = 1000;
-    var topp = 100;
+    var topp = 50;
     var pIncrement=-50;
     var midtemp=0, temprange=50;
     var xOffset=0;
@@ -252,7 +252,7 @@ window.SkewT = function(div) {
 
     var selectedSkewt;
 
-    var plines = [1000,900,800,700,600,500,400,300,200,100];
+    var plines = [1000,900,800,700,600,500,400,300,200,100,50];
     var pticks = [], tickInterval=25;
     for (let i=plines[0]+tickInterval; i>plines[plines.length-1]; i-=tickInterval) pticks.push(i);
     var barbsize = 15;   /////
@@ -266,9 +266,10 @@ window.SkewT = function(div) {
     //aux
     var unit = "kt"; // or kmh
 
-    var isTouchDevice =  ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) ||  (navigator.msMaxTouchPoints > 0);
+    isTouchDevice = isTouchDevice || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) ||  (navigator.msMaxTouchPoints > 0);
 
-    //console.log(isTouchDevice);
+    console.log("this is a touch device:", isTouchDevice);
+    
 
 
     //containers
@@ -533,20 +534,26 @@ window.SkewT = function(div) {
             [tmpcfocus, dwpcfocus, hghtfocus, wspdfocus].forEach(e=>e.style("display", null));
             move.call(tooltipRect.node());
             startX=d3.mouse(this)[0]-xOffset;
+            //console.log("start drag");
 
         }
 
         function end(e){
             startX=null;
+            //console.log("end drag");
         }
 
-        _this.hide = function(){
+        _this.hideTooltips = function(){
             [tmpcfocus, dwpcfocus, hghtfocus, wspdfocus].forEach(e=>e.style("display", "none"));
         };
 
+        _this.showTooltips = function(){
+            [tmpcfocus, dwpcfocus, hghtfocus, wspdfocus].forEach(e=>e.style("display", null));
+        };
 
         _this.move2P = function(y0){
 
+            //console.log("line moving vertically");
             var i = bisectTemp(dataReversed, y0, 1, dataReversed.length-1);
             var d0 = dataReversed[i - 1];
             var d1 = dataReversed[i];
@@ -560,13 +567,15 @@ window.SkewT = function(div) {
             hght2.html("&nbsp;&nbsp;&nbsp;"+Math.round(d.dwpt)+"&#176;C");
 
             wspdfocus.attr("transform", "translate(" + (w-60)  + "," + y(d.press) + ")");
-            wspd1.html(Math.round(convert(d.wspd, unit)*10)/10 + " " + unit);
+            wspd1.html(isNaN(d.wspd)?"" : (Math.round(convert(d.wspd, unit)*10)/10 + " " + unit));
             wspd2.html(Math.round(d.temp)+"&#176;C");
             wspd3.style("transform",`rotate(${d.wdir}deg)`);
 
+            if (_this.cbf) _this.cbf(d.press);
         };
 
         function move(e){
+            //console.log("move");
             var newX=d3.mouse(this)[0];
             if (startX!==null){
                 xOffset=-(startX-newX);
@@ -584,6 +593,7 @@ window.SkewT = function(div) {
             //.on("mouseout",  end)
             //.on("mousemove", move)
         if (!isTouchDevice) {
+
             tooltipRect.call(d3.drag().on("start", start).on("drag",move).on("end", end));
         } else {
             tooltipRect
@@ -641,7 +651,7 @@ window.SkewT = function(div) {
                 dataReversed=[].concat(d.data).reverse();
             }
         });
-        _this.hide();
+        _this.hideTooltips();
 
     };
 
@@ -674,7 +684,6 @@ window.SkewT = function(div) {
             data=dataObj.data;
             for (let p in dataObj.lines) dataObj.lines[p].remove();
         }
-
 
         //reset parctemp range
         ranges.parctemp.input.node().value = ranges.parctemp.value = dataObj.parctemp = Math.round(dataObj.parctemp*10)/10 ;
@@ -710,7 +719,6 @@ window.SkewT = function(div) {
                 .attr("class", "dwpt")//(d,i)=>`dwpt ${i<10?"skline":"mean"}` )
                 .attr("clip-path", "url(#clipper)")
                 .attr("d", tempdewlineFx);
-
 
             drawParcelTraj(dataObj);
         }
@@ -751,7 +759,7 @@ window.SkewT = function(div) {
     }
     let ranges= {
         gradient:{min:0, max:85, step:5,  value: 90-gradient},
-        topp:{ min:100, max:900, step: 50, value:100},
+        topp:{ min:50, max:900, step: 50, value:50},
     //    midtemp:{value:0, step:2, min:-50, max:50},
         parctemp:{value: 10, step:2, min:-50, max: 50}
     };
@@ -764,7 +772,7 @@ window.SkewT = function(div) {
         r.input = rangeContainer.append("input").attr("type","range").attr("min",r.min).attr("max",r.max).attr("step",r.step).attr("value",r.value).attr("class","skewt-ranges")
         .on("input",(a,b,c)=>{
 
-            _this.hide();
+            _this.hideTooltips();
             r.value=+c[0].value;
 
             if(p=="gradient") {
@@ -812,12 +820,12 @@ window.SkewT = function(div) {
 
     var remove = function(s){
         let dataObj=dataAr.find(d=>d.data==s);
-        if (dataObj){
-            for (let p in dataObj.lines){
-                dataObj.lines[p].remove();
-            }
+        if (!dataObj) return;
+        for (let p in dataObj.lines){
+            dataObj.lines[p].remove();
         }
         dataAr.splice(dataAr.indexOf(dataObj),1);
+
     };
 
     var clear = function(s){   //remove everything
@@ -843,7 +851,11 @@ window.SkewT = function(div) {
     this.clearBg= clearBg;
     this.selectSkewt=selectSkewt;
     this.remove=remove;
-    //this.move2P and this.hide,  declared
+    this.cbf=null;
+    this.setCallback=f=>{
+        this.cbf=f;
+    };
+    //this.move2P and this.hideTooltips,  this.showTooltips,  has been declared
 
     //init
     setVariables();
