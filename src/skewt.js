@@ -51,10 +51,12 @@ window.SkewT = function(div, isTouchDevice) {
     //aux
     var unit = "kt"; // or kmh
 
-    isTouchDevice = isTouchDevice || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) ||  (navigator.msMaxTouchPoints > 0);
 
+    if (isTouchDevice === void 0){
+        isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) ||  (navigator.msMaxTouchPoints > 0);
+    }
     console.log("this is a touch device:", isTouchDevice);
-    
+
 
 
     //containers
