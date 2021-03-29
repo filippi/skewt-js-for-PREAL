@@ -28,7 +28,7 @@ window.SkewT = function(div, isTouchDevice) {
     var basep = 1000;
     var topp = 50;
     var pIncrement=-50;
-    var midtemp=0, temprange=50;
+    var midtemp=0, temprange=60;
     var xOffset=0;
     //var parctemp;
     var steph = atm.getElevation(topp)/20;
@@ -53,9 +53,14 @@ window.SkewT = function(div, isTouchDevice) {
 
 
     if (isTouchDevice === void 0){
-        isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) ||  (navigator.msMaxTouchPoints > 0);
+        if (L && L.version) {  //check if leaflet is loaded globally
+            if (L.Browser.mobile) isTouchDevice = true;
+        } else {
+            isTouchDevice =  ('ontouchstart' in window)   ||
+                (navigator.maxTouchPoints > 0) ||  (navigator.msMaxTouchPoints > 0);
+        }
     }
-    console.log("this is a touch device:", isTouchDevice);
+    //console.log("this is a touch device:", isTouchDevice);
 
 
 
@@ -135,7 +140,7 @@ window.SkewT = function(div, isTouchDevice) {
 
         // Skewed temperature lines
         lines.temp = skewtbg.selectAll("templine")
-        .data(d3.scaleLinear().domain([midtemp-temprange*2,midtemp+temprange]).ticks(15))
+        .data(d3.scaleLinear().domain([midtemp-temprange*3,midtemp+temprange]).ticks(24))
         .enter().append("line")
         .attr("x1", d => x(d)-0.5 + (y(basep)-y(topp))/tan)
         .attr("x2", d => x(d)-0.5)
@@ -163,7 +168,7 @@ window.SkewT = function(div, isTouchDevice) {
                 [basep, basep-(basep-topp)*0.25,basep-(basep-topp)*0.5,basep-(basep-topp)*0.75, topp]
                 : d3.range(basep,topp-50 ,pIncrement);
 
-        var dryad = d3.scaleLinear().domain([midtemp-temprange*3,midtemp+temprange*3]).ticks(30);
+        var dryad = d3.scaleLinear().domain([midtemp-temprange*2,midtemp+temprange*4]).ticks(36);
 
         var all = [];
 
@@ -516,8 +521,8 @@ window.SkewT = function(div, isTouchDevice) {
         }
 
         //barbs stuff
-        var stepH = 500;
-        var lastH=-500;
+        var stepH = 300;
+        var lastH=-300;
 
         var barbs = skewtlines[0].filter(function(d) {
             if (d.hght>lastH+steph) lastH=d.hght;
@@ -608,11 +613,14 @@ window.SkewT = function(div, isTouchDevice) {
             }
         })
 
-        if (p=="topp") rangeContainer.append("input").attr("type","checkbox").on("click",(a,b,e)=>{
-            adjustGradient= e[0].checked;
-        })
+
         rangeContainer.append("div").attr("class","flex-break");
     }
+
+    rangeContainer.append("input").attr("type","checkbox").on("click",(a,b,e)=>{
+            adjustGradient= e[0].checked;
+    });
+    rangeContainer.append("div").attr("class","skewt-checkbox-text").html("Maintain temp range on X-axis when zooming");
 
 
     var remove = function(s){
