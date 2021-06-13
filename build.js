@@ -16,7 +16,8 @@ async function build() {
     try {
         bundle = await rollup.rollup(inputOptions);
     }  catch(er){
-          console.log("Er",er);
+        console.log("Er",er);
+        return
     }
     console.log("result");
     let result = await bundle.generate(outputOptions);
@@ -50,8 +51,12 @@ async function main(f){
     console.log("start build")
     let code = await build();//with rollup
     //code = await minifyCode(code);
-    fs.writeFileSync("dist/bundle.js", code);
-    console.log("done");
+    if (code){
+        fs.writeFileSync("dist/bundle.js", code);
+        console.log("done");
+    } else {
+        console.log("error,  fix it and save again")
+    }
     building=false;
 }
 

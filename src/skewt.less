@@ -1,24 +1,61 @@
 .skew-t{
 
+    position:relative;
+    padding:0px;
+
+    .fnt{
+        transition: font 0.3s;
+        font:10px Arial;
+    }
+
+    .mainsvg{
+        background-color:transparent;
+    }
+
     .controls{
         box-sizing:border-box;
         width:100%;
         display:flex;
     }
-    .controls .buttons{
-        flex-grow:1;
-        margin:3px;
-        padding:3px;
-        border-radius:10px;
-        text-align:center;
-        font:10px Arial;
-        cursor:pointer;
-        background-color:rgba(220,220,220,1);
+
+    .controls,.range-container,.range-container-extra{
+        .buttons{
+            flex-grow:1;
+            margin:3px;
+            padding:3px;
+            border-radius:10px;
+            text-align:center;
+            //.fnt;
+            cursor:pointer;
+            background-color:rgba(220,220,220,1);
+            &.clicked{
+                background-color:rgba(150,150,150,1);
+                color:white;
+            }
+            &.units{
+                flex-grow:0;
+                width:80px;
+            }
+            &.noclick{
+                cursor:initial;
+            }
+
+        }
     }
-    .controls .buttons.clicked{
-        background-color:rgba(150,150,150,1);
-        color:white;
+
+    .controls{
+        .values{
+            flex-grow:1;
+            margin:3px;
+            padding:3px;
+            text-align:center;
+            //.fnt;
+            border-radius:10px;
+            border:1px solid rgba(220,220,220,1);
+            min-width:40px;
+        }
     }
+
 
     .axis path,
     .axis line {
@@ -34,7 +71,16 @@
     .y.axis.hght { font-size: 10px; fill: red;}
     .x.axis { font-size: 10px; }
     .y.axis.ticks text { display: none; }
+    .y.axis.hght-ticks {
+        text {
+            display:none;
+        }
+        line{
+            stroke:red;
 
+        }
+
+    }
 
     .skewt-line{
         fill:none;
@@ -58,6 +104,16 @@
     .parcel{
         .skewt-line;
         stroke:green;
+        stroke-opacity:0.3;
+    }
+    .cond-level{
+        .skewt-line;
+        stroke-width:1px;
+        stroke:rgba(128,128,128,0.8);
+        stroke-opacity:0.15;
+        &.highlight-line{
+            stroke-width:1px;
+        }
     }
 
     //.skline   { stroke-width: 1.8px; }
@@ -101,6 +157,29 @@
         stroke: blue;
         stroke-dasharray:2;
     }
+    .elr{
+        .gridline;
+        stroke:purple;
+        stroke-opacity:0.03;
+        stroke-width:3px;
+        &.highlight-line{
+          stroke-opacity:0.7;
+        }
+
+
+    }
+
+    .sigline{
+        .gridline;
+        &.surface{
+            stroke:green;
+        }
+        &.tropopause-level{
+            stroke:blue;
+        }
+
+
+    }
 
     .windbarb {
         stroke: #000;
@@ -141,12 +220,16 @@
         flex-wrap:wrap;
         margin-top:10px;
     }
+    .range-container-extra{
+        .range-container;
+        margin-top:0px;
+    }
 
     .skewt-ranges{
         all:revert;
         -webkit-appearance: none;
         color:white;
-        width:65%;
+        width:60%;
         &:focus{
             outline:none;
         }
@@ -173,17 +256,35 @@
         }
     }
 
-    .skewt-range-val{
-        font:10px Arial;
-        width:15%;
+    .skewt-range-des{
+        width:20%;
     }
+    .skewt-range-val{
+        width:15%;
+        white-space:nowrap;
+    }
+    .checkbox-container{
+        width:100%;
+        line-height:20px;
+    }
+
     .skewt-checkbox-text{
-        font:10px Arial;
-        line-height:18px;
+
+        display:inline-block;
     }
 
     .flex-break{
         flex-basis:100%;
     }
 
+    .cloud-container{
+        overflow:hidden;
+        position:absolute;
+        width:20px;
+        opacity:0.8;
+        .cloud{
+            position:absolute;
+            width:10px;
+        }
+    }
 }
