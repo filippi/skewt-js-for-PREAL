@@ -50,7 +50,7 @@ async function main(f){
     fs.writeFileSync("dist/skewt.css", css);
     console.log("start build")
     let code = await build();//with rollup
-    //code = await minifyCode(code);
+    code = await minifyCode(code);
     if (code){
         fs.writeFileSync("dist/bundle.js", code);
         console.log("done");

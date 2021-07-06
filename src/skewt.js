@@ -1,6 +1,7 @@
 
 import * as atm from './atmosphere.js';
 import  clouds from './clouds.js';
+import  d3 from './d3.custom.min.js';
 
 
 ////Original code from:
@@ -727,7 +728,8 @@ window.SkewT = function(div, {isTouchDevice, gradient=45, topp=50, parctempShift
 
     //controls
     var buttons = {"Dry Adiabat":{},"Moist Adiabat":{},"Isohume":{},"Temp":{},"Pressure":{}};
-    for (let p in buttons){
+    for (let prop in buttons){
+        let p = prop;
         let b = buttons[p];
         b.hi = false;
         b.el=controls.append("div").attr("class","buttons").text(p).on("click", ()=>{
@@ -748,7 +750,8 @@ window.SkewT = function(div, {isTouchDevice, gradient=45, topp=50, parctempShift
         "CLD top":{hi:false}
     };
 
-    for (let p in values){
+    for (let prop in values){
+        let p = prop;
         let b = values[p];
         b.val=valuesContainer.append("div").attr("class",`buttons ${p=="surface"?"noclick":""} ${b.hi?"clicked":""}`).html(p+":");
         if (/CCL|LCL|TCON|THRM top|CLD top/.test(p)){
@@ -783,7 +786,9 @@ window.SkewT = function(div, {isTouchDevice, gradient=45, topp=50, parctempShift
         return html;
     }
 
-    for (let p in ranges){
+    for (let prop in ranges){
+
+        let p = prop;
 
         let contnr= p=="parctemp"||p=="topp"? rangeContainer:rangeContainer2;
 
@@ -870,11 +875,13 @@ window.SkewT = function(div, {isTouchDevice, gradient=45, topp=50, parctempShift
     rangeContainer2.append("span").attr("class","skewt-checkbox-text").style("line-height","22px").html("Select alt units: ");
 
     var units = {"meter":{},"feet":{}};
-    for (let p in units){
+    for (let prop in units){
+        let p = prop;
         units[p].hi = p[0]==unitAlt;
         units[p].el=rangeContainer2.append("div").attr("class","buttons units"+(unitAlt==p[0]?" clicked":"")).text(p).on("click", ()=>{
-            for (let p2 in units) {
-                units[p2].hi= p==p2;
+            for (let prop2 in units) {
+                let p2 = prop2;
+                units[p2].hi = p==p2;
                 units[p2].el.node().classList[units[p2].hi?"add":"remove"]("clicked");
             }
             unitAlt=p[0];
