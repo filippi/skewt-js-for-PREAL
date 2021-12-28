@@ -2,18 +2,18 @@ function lerp(v0, v1, weight) {
     return v0 + weight * (v1 - v0);
 }
 
-let _hrAlt = [0,    5,   11,  16.7, 25,  33.4, 50,  58.4, 66.7, 75,  83.3, 92,  98,  100];     //wndy distribution % for pressure levels
+let _hrAlt = [0, 5, 11, 16.7, 25, 33.4, 50, 58.4, 66.7, 75, 83.3, 92, 98, 100];     //wndy distribution % for pressure levels
 
 
 
 /////////to test
-_hrAlt =[0, 3.42, 4.82, 6.26, 9.23, 12.34, 19.07, 26.63, 35.29, 45.49, 58.01, 74.54, 85.51, 100];
+_hrAlt = [0, 3.42, 4.82, 6.26, 9.23, 12.34, 19.07, 26.63, 35.29, 45.49, 58.01, 74.54, 85.51, 100];
 //based on standard elevation for pressure levels  below,  thus linear for elevation
 
 //using d3,  basep=1050
-_hrAlt=[ 2.07, 4.26, 5.39, 6.56, 8.99, 11.56, 17.24, 23.80, 31.55, 41.04, 53.28, 70.52, 82.75, 100];
+_hrAlt = [2.07, 4.26, 5.39, 6.56, 8.99, 11.56, 17.24, 23.80, 31.55, 41.04, 53.28, 70.52, 82.75, 100];
 
-var _hrAltPressure = [ null, 950, 925, 900,  850, 800,  700, 600,  500,  400, 300,  200, 150, null];
+var _hrAltPressure = [null, 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 200, 150, null];
 /////
 
 
@@ -31,7 +31,7 @@ for (let i = 0; i < 160; i++) {
 // Output an object:
 // - clouds: the clouds cover,
 // - width & height: dimension of the cover data.
-function computeClouds(ad, wdth=1, hght=200 ) {      ////added wdth and hght,  to improve performance   ///supply own hrAlt   altutude percentage distribution,  based on pressure levels
+function computeClouds(ad, wdth = 1, hght = 200) {      ////added wdth and hght,  to improve performance   ///supply own hrAlt   altutude percentage distribution,  based on pressure levels
     // Compute clouds data.
 
     //console.log("WID",wdth,hght);
@@ -39,35 +39,34 @@ function computeClouds(ad, wdth=1, hght=200 ) {      ////added wdth and hght,  t
     /////////convert to windy format
     //ad must be sorted;
 
-    //rel position 0 to 100
-    const logscale = (x,d,r) =>{  //log scale function D3,  x is the value d is the domain [] and r is the range []
-        let xlog=Math.log10(x),
-            dlog=[Math.log10(d[0]),Math.log10(d[1])],
-            delta_d=dlog[1]-dlog[0],
-            delta_r=r[1]-r[0];
-        return r[0] + ((xlog - dlog[0]) /delta_d) * delta_r;
+    const logscale = (x, d, r) => {  //log scale function D3,  x is the value d is the domain [] and r is the range []
+        let xlog = Math.log10(x),
+            dlog = [Math.log10(d[0]), Math.log10(d[1])],
+            delta_d = dlog[1] - dlog[0],
+            delta_r = r[1] - r[0];
+        return r[0] + ((xlog - dlog[0]) / delta_d) * delta_r;
     }
 
     let airData = {};
-    let hrAltPressure=[], hrAlt=[];
-    ad.forEach(a=>{
+    let hrAltPressure = [], hrAlt = [];
+    ad.forEach(a => {
         if (!a.press) return;
-        if(a.rh==void 0 && a.dwpt && a.temp) {
-            a.rh=100*( Math.exp((17.625*a.dwpt)/(243.04+a.dwpt))/Math.exp((17.625*a.temp)/(243.04+a.temp)));     ///August-Roche-Magnus approximation.
+        if (a.rh == void 0 && a.dwpt && a.temp) {
+            a.rh = 100 * (Math.exp((17.625 * a.dwpt) / (243.04 + a.dwpt)) / Math.exp((17.625 * a.temp) / (243.04 + a.temp)));     ///August-Roche-Magnus approximation.
         }
-        if (a.rh && a.press>=100){
-            let p=Math.round(a.press);
-            airData[`rh-${p}h`]=[a.rh];
+        if (a.rh && a.press >= 100) {
+            let p = Math.round(a.press);
+            airData[`rh-${p}h`] = [a.rh];
             hrAltPressure.push(p);
-            hrAlt.push( logscale(p,[1050,100],[0,100]));
+            hrAlt.push(logscale(p, [1050, 100], [0, 100]));
         }
     })
 
-    //fix underground clouds,  add humidty 0 element in airData wehre the pressure is surfcace pressure +1:
-    airData[`rh-${(hrAltPressure[0]+1)}h`] = [0];
-    hrAlt.unshift(null,hrAlt[0]);
-    hrAltPressure.unshift(null, hrAltPressure[0]+1);
-    hrAltPressure.pop();  hrAltPressure.push(null);
+    //fi x  underground clouds,  add humidty 0 element in airData wehre the pressure is surfcace pressure +1:
+    airData[`rh-${(hrAltPressure[0] + 1)}h`] = [0];
+    hrAlt.unshift(null, hrAlt[0]);
+    hrAltPressure.unshift(null, hrAltPressure[0] + 1);
+    hrAltPressure.pop(); hrAltPressure.push(null);
 
     ///////////
 
@@ -233,4 +232,7 @@ function cloudsToCanvas({ clouds, width, height, canvas }) {
     return canvas;
 }
 
-export default {computeClouds,  cloudsToCanvas}
+export default {
+    computeClouds,
+    cloudsToCanvas
+}

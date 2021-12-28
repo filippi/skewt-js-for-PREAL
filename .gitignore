@@ -3,5 +3,8 @@ package-lock.json
 .npmignore
 .gitignore
 atmosphere__.js
+move.js
+move_2_plugin.js
+move_2_windy_mod.js
 
 

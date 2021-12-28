@@ -4,24 +4,22 @@ const
     less = require('less'),
     babel = require("@babel/core"),
     minify = require("babel-minify");
+    translate2windyMod = require("./make_w_mod");
 
-const inputOptions = {input: "src/skewt.js"};
+const inputOptions = {input: "src/skewt.mjs"};
 const outputOptions = {file:"dist/bundle.js",  format:"iife", compact:true, minifyInternalExports:true};
 
-const files=["math.js","skewt.js","atmosphere.js","skewt.less"];
+const files=["d3.custom.min.mjs","clouds.mjs","math.mjs","skewt.mjs","atmosphere.mjs","skewt.less"];  
 
 async function build() {
-    console.log("rollup");
     let bundle;
     try {
         bundle = await rollup.rollup(inputOptions);
     }  catch(er){
-        console.log("Er",er);
+        console.log("Error",er);
         return
     }
-    console.log("result");
     let result = await bundle.generate(outputOptions);
-    //await bundle.write(outputOptions);
     await bundle.close();
     return result.output[0].code;
 }
@@ -46,13 +44,21 @@ async function main(f){
         cleancss: true,
         compress: true,
     }).catch(console.log);
-    //css=`document.head.insertAdjacentHTML("beforeend", \`<style>${css}</style>\`)`;
     fs.writeFileSync("dist/skewt.css", css);
     console.log("start build")
     let code = await build();//with rollup
-    code = await minifyCode(code);
+
+    //code = await minifyCode(code);
     if (code){
         fs.writeFileSync("dist/bundle.js", code);
+
+        //translate to windy modules
+        let code4windyMod=  translate2windyMod(code);
+        let min4windy= await minifyCode(code4windyMod);
+        
+        fs.writeFileSync("windy_module/skewt.js",code4windyMod,'utf8');
+        fs.writeFileSync("windy_module/skewt.min.js",min4windy,'utf8');
+        
         console.log("done");
     } else {
         console.log("error,  fix it and save again")
