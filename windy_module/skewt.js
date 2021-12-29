@@ -1318,8 +1318,8 @@ function (div, { isTouchDevice, gradient = 45, topp = 50, maxtopp=50, parctempSh
             data = s;     //do not filter here, filter creates new obj, looses ref
             //however, object itself can be changed.
             for(let i = 0; i<data.length; i++){
-                //console.log(data[i])
-                if (data[i].dwpt == undefined && (data[i].rh>=0 && data[i].rh<=100)){
+                // if there is no dewpoint available,  but humidity is available,  then use august-magnus-roche equation.  
+                if (  !(data[i].dwpt || data[i].dwpt===0 )  && (data[i].rh>=0 && data[i].rh<=100)){
                     let {rh, temp} = data[i];
                     data[i].dwpt = 243.04*(Math.log(rh/100)+((17.625*temp)/(243.04+temp)))/(17.625-Math.log(rh/100)-((17.625*temp)/(243.04+temp)));
                 } 
@@ -1346,56 +1346,49 @@ function (div, { isTouchDevice, gradient = 45, topp = 50, maxtopp=50, parctempSh
         }
 
         //skew-t stuff
-        const filteredData = data.filter(d => d.temp > -1000 && (d.dwpt == undefined || d.dwpt > -1000));
-        let skewtlines = [filteredData];
+        
+        // Filter data,  depending on range moving,  or nullish values
+        
+        let data4moving; 
         if (data.length > 50 && moving) {
             let prev = -1;
-            skewtlines = [filteredData.filter((e, i, a) => {
+            data4moving = data.filter((e, i, a) => {
                 const n = Math.floor(i * 50 / (a.length - 1));
                 if (n > prev) {
                     prev = n;
                     return true;
                 }
-            })];
+            });
+        } else {
+            data4moving = data.map(e=>e);
         }
+        let data4temp = [data4moving.filter(e=>( e.temp || e.temp===0 ) && e.temp>-999 )];
+        let data4dwpt = [data4moving.filter(e=>( e.dwpt || e.dwpt===0 ) && e.dwpt>-999 )];
+
+        
+        
+
 
         const templineFx = t.line().curve(t.curveLinear).x(function (d, i) { return x(d.temp) + (y(basep) - y(d.press)) / tan; }).y(function (d, i) { return y(d.press); });
         dataObj.lines.tempLine = skewtgroup
             .selectAll("templines")
-            .data(skewtlines).enter().append("path")
+            .data(data4temp).enter().append("path")
             .attr("class", "temp")//(d,i)=> `temp ${i<10?"skline":"mean"}` )
             .attr("clip-path", "url(#clipper)")
             .attr("d", templineFx);
 
-        if (data[0].dwpt) {
-            const tempdewlineFx = t.line().curve(t.curveLinear).x(function (d, i) { return x(d.dwpt) + (y(basep) - y(d.press)) / tan; }).y(function (d, i) { return y(d.press); });
-            dataObj.lines.tempdewLine = skewtgroup
-                .selectAll("tempdewlines")
-                .data([skewtlines[0].filter(e=>e.dwpt)]).enter().append("path")
-                .attr("class", "dwpt")//(d,i)=>`dwpt ${i<10?"skline":"mean"}` )
-                .attr("clip-path", "url(#clipper)")
-                .attr("d", tempdewlineFx);
+        const tempdewlineFx = t.line().curve(t.curveLinear).x(function (d, i) { return x(d.dwpt) + (y(basep) - y(d.press)) / tan; }).y(function (d, i) { return y(d.press); });
+        dataObj.lines.tempdewLine = skewtgroup
+            .selectAll("tempdewlines")
+            .data(data4dwpt).enter().append("path")
+            .attr("class", "dwpt")//(d,i)=>`dwpt ${i<10?"skline":"mean"}` )
+            .attr("clip-path", "url(#clipper)")
+            .attr("d", tempdewlineFx);
 
-            drawParcelTraj(dataObj);
-        } 
-        /*else if (data[0].rh) {  //if no dewpoint data,  but rh is available,  then calculate the dp
-            const dewpointFromRh = ({rh,temp}) => {
-                console.log(rh,temp);
-                return  243.04*(Math.log(rh/100)+((17.625*temp)/(243.04+temp)))/(17.625-Math.log(rh/100)-((17.625*temp)/(243.04+temp)))
-            }
-            const dewpointFromRhFx = d3.line().curve(d3.curveLinear).x(function (d, i) { return x(dewpointFromRh(d)) + (y(basep) - y(d.press)) / tan; }).y(function (d, i) { return y(d.press); }); 
-            dataObj.lines.tempdewLineCalc = skewtgroup
-                .selectAll("tempdewlinescalc")
-                .data([skewtlines[0].filter(e=> e.rh>=0 && e.rh<=100)]).enter().append("path")
-                .attr("class", "dwpt")//(d,i)=> `temp ${i<10?"skline":"mean"}` )
-                .attr("clip-path", "url(#clipper)")
-                .attr("d", dewpointFromRhFx);
-            //drawParcelTraj(dataObj);
-        }
-        */
+        drawParcelTraj(dataObj);
+         
         
-       
-
+    
         const siglines = data
             .filter((d, i, a, f) => d.flags && (f = getFlags(d.flags), f.includes("tropopause level") || f.includes("surface")) ? d.press : false)
             .map((d, i, a, f) => (f = getFlags(d.flags), { press: d.press, classes: f.map(e => e.replace(/ /g, "-")).join(" ") }));
@@ -1413,7 +1406,7 @@ function (div, { isTouchDevice, gradient = 45, topp = 50, maxtopp=50, parctempSh
 
         let lastH = -300;
         //filter barbs to be valid and not too crowded
-        const barbs = skewtlines[0].filter(function (d) {
+        const barbs = data4moving.filter(function (d) {
             if (d.hght > lastH + steph && (d.wspd || d.wspd === 0) && d.press >= topp && !(d.wspd === 0 && d.wdir === 0)) lastH = d.hght;
             return d.hght == lastH;
         });
