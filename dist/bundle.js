@@ -735,14 +735,6 @@ function (div, { isTouchDevice, gradient = 45, topp = 50, maxtopp=50, parctempSh
     let unitAlt = "m";
     let windDisplay = "Barbs";
 
-    if (isTouchDevice === void 0) {
-        if (L && L.version) {  //check if leaflet is loaded globally
-            if (L.Browser.mobile) isTouchDevice = true;
-        } else {
-            isTouchDevice = ('ontouchstart' in window) ||
-                (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
-        }
-    }
     //console.log("this is a touch device:", isTouchDevice);
 
 
