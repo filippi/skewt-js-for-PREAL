@@ -80,24 +80,6 @@ if (!isset($_GET['file'])) {
     <body>
 
     <h1>Skew-T Log-P Diagrams</h1>
-
-    <div class="file-list">
-        <h2>Available CSV Files</h2>
-        <ul>
-            <?php
-            if (empty($csvFiles)) {
-                echo '<li>No CSV files found in the "data" directory.</li>';
-            } else {
-                sort($csvFiles); // Sort for neatness
-                foreach ($csvFiles as $file) {
-                    echo '<li class="file-item">';
-                    echo '<a href="?file=' . urlencode($file) . '">' . htmlspecialchars($file) . '</a>';
-                    echo '</li>';
-                }
-            }
-            ?>
-        </ul>
-    </div>
     <div class="file-list">
         <h2>Available NAM Files</h2>
         <ul>
@@ -115,6 +97,24 @@ if (!isset($_GET['file'])) {
             ?>
         </ul>
     </div>
+    <div class="file-list">
+        <h2>Available CSV Files</h2>
+        <ul>
+            <?php
+            if (empty($csvFiles)) {
+                echo '<li>No CSV files found in the "data" directory.</li>';
+            } else {
+                sort($csvFiles); // Sort for neatness
+                foreach ($csvFiles as $file) {
+                    echo '<li class="file-item">';
+                    echo '<a href="?file=' . urlencode($file) . '">' . htmlspecialchars($file) . '</a>';
+                    echo '</li>';
+                }
+            }
+            ?>
+        </ul>
+    </div>
+
 
     </body>
     </html>
